@@ -18,7 +18,10 @@ function generateWallet (network) {
   return { key: key, zaddr: zaddr }
 }
 
-// TODO (howardwu): Generate secret key from seed
+// Generate secret key from seed
+function generateKeyFromSeed (network, seed, salt) {
+  return walletops.CreateKeyFromSeed(network, seed, salt)
+}
 
 // TODO (howardwu): Generate secret key from mnemonic (bip39)
 
@@ -36,6 +39,7 @@ function generateWallet (network) {
 
 module.exports = {
   generateKey: generateKey,
+  generateKeyFromSeed: generateKeyFromSeed,
   generateAddressFromKey: generateAddressFromKey,
   generateWallet: generateWallet
 }

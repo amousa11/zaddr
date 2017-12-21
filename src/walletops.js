@@ -84,6 +84,28 @@ function CreateKey (network) {
   return bs58check.encode(Buffer.concat([bufferHeader, buffer]))
 }
 
+// Creates a spending key from a given seed.
+function CreateKeyFromSeed (network, seed, salt) {
+  if (!ValidateNetwork(network)) {
+    throw new Error('Invalid network choice')
+  }
+
+  const header = network === 'mainnet' ? networkHeader.mainnet : networkHeader.testnet
+
+  return new Promise((resolve, reject) => {
+    crypto.pbkdf2(seed, salt, 2 ^ 16, 32, 'sha256', (err, derivedKey) => {
+      if (err) throw err
+
+      const buffer = derivedKey
+      buffer[0] &= 0x0f
+
+      const bufferHeader = Buffer.from(header.key)
+
+      resolve(bs58check.encode(Buffer.concat([bufferHeader, buffer])))
+    })
+  })
+}
+
 // Converts a provided spending key string to a zaddr string.
 function ConvertKeyToAddress (key, network) {
   if (!ValidateNetwork(network)) {
@@ -122,5 +144,6 @@ function ConvertKeyToAddress (key, network) {
 
 module.exports = {
   CreateKey: CreateKey,
+  CreateKeyFromSeed: CreateKeyFromSeed,
   ConvertKeyToAddress: ConvertKeyToAddress
 }

@@ -38,6 +38,20 @@ test('generateKey', function (t) {
   t.end()
 })
 
+test('generateKeyFromSeed', async (t) => {
+  const mainnetKey = await zaddr.generateKeyFromSeed('mainnet', 'ali', '1')
+  t.equal(mainnetKey.slice(0, 2), 'SK')
+
+  const mainnetKey1 = await zaddr.generateKeyFromSeed('mainnet', 'ali', '1')
+  t.equal(mainnetKey, mainnetKey1, 'same seed, same salt => same key')
+  
+  const testnetKey = await zaddr.generateKeyFromSeed('testnet', 'ali', '1')
+  t.equal(testnetKey.slice(0, 2), 'ST')
+
+
+  t.end()
+})
+
 mainnetPairs.forEach(function (pair, index) {
   test('generateAddressFromKey' + index, function (t) {
     const address = zaddr.generateAddressFromKey(pair.key, pair.network)
